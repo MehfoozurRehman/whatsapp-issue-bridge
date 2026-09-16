@@ -10,7 +10,7 @@ npm install
 npm start
 ```
 
-Then open `chrome://extensions` or `edge://extensions`, enable Developer mode, choose **Load unpacked**, and select `extension/`.
+Then open `chrome://extensions` or `edge://extensions`, enable Developer mode, choose **Load unpacked**, and select `extension/`. After selecting messages in WhatsApp Web, click the green floating button; opening the extension popup will show the captured batch.
 
 The service listens on `http://127.0.0.1:8765`. Install `server/whatsapp-issue-bridge.xml` with `install-startup.ps1` to start it at Windows logon.
 
