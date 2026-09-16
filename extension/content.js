@@ -29,7 +29,7 @@
     const candidates = [...document.querySelectorAll('[data-testid*="msg-container"], [data-pre-plain-text], div[role="row"]')];
     const selected = candidates.filter(n => n.matches('[aria-selected="true"]') || n.querySelector('[aria-checked="true"], input:checked') || n.closest('[role="row"]')?.querySelector('[aria-checked="true"], input:checked'));
     const nodes = selected.length ? selected : candidates.filter(n => n.querySelector('[data-testid="selectable-text"], [data-pre-plain-text]')).slice(-10);
-    sendResponse({messages: nodes.slice(-20).map((n, i) => ({index: i + 1, text: textFromNode(n), timestamp: n.getAttribute('data-pre-plain-text') || '', media: [...n.querySelectorAll('img, video, audio')].map(x => ({src: x.currentSrc || x.src, type: x.tagName.toLowerCase()}))})).filter(x => x.text || x.media.length)});
+    Promise.all(nodes.slice(-20).map(async (n, i) => ({index: i + 1, text: textFromNode(n), timestamp: n.getAttribute('data-pre-plain-text') || '', media: await Promise.all([...n.querySelectorAll('img, video, audio')].map(async x => { const src = x.currentSrc || x.src; try { const bytes = new Uint8Array(await (await fetch(src)).arrayBuffer()); let binary = ''; for (const byte of bytes) binary += String.fromCharCode(byte); return {type: x.tagName.toLowerCase(), data: btoa(binary)}; } catch { return {type: x.tagName.toLowerCase(), src}; } }))}))).then(messages => sendResponse({messages: messages.filter(x => x.text || x.media.length)}));
     return true;
   });
 })();
