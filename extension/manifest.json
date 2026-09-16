@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "WhatsApp Issue Bridge",
+  "version": "0.1.0",
+  "description": "Turn selected WhatsApp Web messages into GitHub issues with Gemini.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["https://web.whatsapp.com/*", "http://127.0.0.1:8765/*"],
+  "action": {"default_popup": "popup.html", "default_title": "Create GitHub issue"},
+  "content_scripts": [{"matches": ["https://web.whatsapp.com/*"], "js": ["content.js"], "css": ["content.css"], "run_at": "document_idle"}]
+}

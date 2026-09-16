@@ -1,0 +1,2 @@
+#wib-create-issue { position: fixed; z-index: 999999; right: 24px; bottom: 24px; border: 0; border-radius: 999px; background: #16a34a; color: white; padding: 13px 18px; font: 600 14px system-ui; box-shadow: 0 5px 20px #0004; cursor: pointer; }
+#wib-create-issue:hover { background: #15803d; }
