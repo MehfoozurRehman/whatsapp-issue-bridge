@@ -18,6 +18,7 @@ async function saveHistory(items: Job[]): Promise<void> { await fs.writeFile(his
 function command(program: string, args: string[]): Promise<string> { return new Promise((resolve, reject) => { const child = spawn(program, args, {shell: true, windowsHide: true}); let out = '', err = ''; child.stdout.on('data', chunk => out += chunk); child.stderr.on('data', chunk => err += chunk); child.on('error', reject); child.on('close', code => code === 0 ? resolve(out) : reject(new Error(err || out))); }); }
 
 const app = express(); app.use(cors()); app.use(express.json({limit: '10mb'}));
+app.get('/api/health', (_req, res) => res.json({ok: true, service: 'whatsapp-issue-bridge'}));
 app.get('/api/repos', async (_req, res) => { try { res.json({repos: JSON.parse(await command('gh', ['repo','list','--limit','100','--json','nameWithOwner,description']))}); } catch (error) { res.status(500).json({error: String(error)}); } });
 app.post('/api/jobs', async (req, res) => { const id = crypto.randomUUID(); const job: Job = {id, status: 'queued', createdAt: new Date().toISOString(), repo: req.body.repo, messages: req.body.messages ?? []}; jobs.set(id, job); const dir = path.join(dataDir, 'jobs', id); await fs.mkdir(dir, {recursive: true}); await fs.writeFile(path.join(dir, 'messages.json'), JSON.stringify(job.messages, null, 2)); void processJob(job, dir); res.status(202).json({id, status: job.status}); });
 app.get('/api/jobs/:id', (req, res) => { const job = jobs.get(req.params.id); job ? res.json({job}) : res.status(404).json({error: 'Not found'}); });
